@@ -1,7 +1,5 @@
 // Enemies our player must avoid
 var Enemy = function(x,y) {
-    // Variables applied to each of our instances go here,
-    // we've provided one for you to get started
 
     // The image/sprite for our enemies, this uses
     // a helper we've provided to easily load images
@@ -14,10 +12,9 @@ var Enemy = function(x,y) {
 
 // Update the enemy's position, required method for game
 // Parameter: dt, a time delta between ticks
+// Multiply any movement by the dt parameter to ensure game runs at the same speed for all computers.
 Enemy.prototype.update = function(dt) {
-    // You should multiply any movement by the dt parameter
-    // which will ensure the game runs at the same speed for
-    // all computers.
+
 	this.x = this.x + this.random_speed * dt;
 	if (this.x > 600) {
 		this.x = 0;
@@ -29,15 +26,18 @@ Enemy.prototype.render = function() {
     ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
 };
 
-// Now write your own player class
-// This class requires an update(), render() and
+// The Player class requires an update(), render() and
 // a handleInput() method.
+// function accepts x, y coordinates to determine position and defines what image to use
 var Player = function(x,y) {
 	this.sprite = 'images/char-boy.png';
 	this.x = x;
 	this.y = y;
 };
 
+// if the collision method returns true, then the resetPlayer method is called to reset the game
+// the player cannot move outside of the boundaries of the canvas
+// when the player reaches the water, the game is won and the player returns to the start position
 Player.prototype.update = function(dt) {
 	
 	if (this.collision() === true) {
@@ -59,6 +59,7 @@ Player.prototype.render = function() {
 	ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
 }
 
+// the handleInput method adjusts the player's position based on input from the event listener
 Player.prototype.handleInput = function(key) {
 	switch (key) {
 	case 'left':
@@ -76,11 +77,15 @@ Player.prototype.handleInput = function(key) {
 	}
 }
 
-//Now instantiate your objects
+
 //Place all enemy objects in an array called allEnemies
 var allEnemies = [new Enemy(450,100), new Enemy(-300,200), new Enemy(100,200)];
+
 //Place the player object in a variable called player
 var player = new Player(100,400);
+
+// collision method iterates over allEnemies array  and tests the enemy at each index to see if its coordinates overlap
+// with the player coordinates.  If so, it returns true, false otherwise.
 Player.prototype.collision = function() {
 	var p = this;
 	var e = false;
@@ -89,12 +94,13 @@ Player.prototype.collision = function() {
 				p.y + 35 > enemy.y) {
 			e = true;
 		} else {
-			flag = false;
+			f = false;
 		}
 	});
 	return e;
 }
 
+// resets the player to the initial location
 Player.prototype.resetPlayer = function() {
 	
 	{
